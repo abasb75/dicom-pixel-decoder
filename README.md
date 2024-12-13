@@ -18,21 +18,21 @@ a javascript powerfull dicom decoder
 1.2.840.10008.1.2.4.90 | JPEG 2000 Image Compression (Lossless Only) | Yes 
 1.2.840.10008.1.2.4.91 | JPEG 2000 Image Compression	 | Yes
 1.2.840.10008.1.2.4.51 | JPEG Baseline (Processes 2 & 4) | No	 
-1.2.840.10008.1.2.4.52 | JPEG Extended (Processes 3 & 5) | No
-1.2.840.10008.1.2.4.53 | JPEG Spectral Selection, Nonhierarchical (Processes 6 & 8)	| No	
-1.2.840.10008.1.2.4.54 | JPEG Spectral Selection, Nonhierarchical (Processes 7 & 9)	| No	
-1.2.840.10008.1.2.4.55 | JPEG Full Progression, Nonhierarchical (Processes 10 & 12)	| No	
-1.2.840.10008.1.2.4.56 | JPEG Full Progression, Nonhierarchical (Processes 11 & 13)	| No	
+1.2.840.10008.1.2.4.52 | JPEG Extended (Processes 3 & 5) | No(Retired)
+1.2.840.10008.1.2.4.53 | JPEG Spectral Selection, Nonhierarchical (Processes 6 & 8)	| No(Retired)
+1.2.840.10008.1.2.4.54 | JPEG Spectral Selection, Nonhierarchical (Processes 7 & 9)	| No(Retired)	
+1.2.840.10008.1.2.4.55 | JPEG Full Progression, Nonhierarchical (Processes 10 & 12)	| No(Retired)	
+1.2.840.10008.1.2.4.56 | JPEG Full Progression, Nonhierarchical (Processes 11 & 13)	| No(Retired)	
 1.2.840.10008.1.2.4.57 | JPEG Lossless, Nonhierarchical (Processes 14)	 	| No	
-1.2.840.10008.1.2.4.58 | JPEG Lossless, Nonhierarchical (Processes 15)	Retired	| No	
-1.2.840.10008.1.2.4.59 | JPEG Extended, Hierarchical (Processes 16 & 18)	Retired	| No	
-1.2.840.10008.1.2.4.60 | JPEG Extended, Hierarchical (Processes 17 & 19)	Retired
-1.2.840.10008.1.2.4.61 | JPEG Spectral Selection, Hierarchical (Processes 20 & 22)	| No	
-1.2.840.10008.1.2.4.62 | JPEG Spectral Selection, Hierarchical (Processes 21 & 23)	| No	
-1.2.840.10008.1.2.4.63 | JPEG Full Progression, Hierarchical (Processes 24 & 26)	| No	
-1.2.840.10008.1.2.4.64 | JPEG Full Progression, Hierarchical (Processes 25 & 27)	| No	
-1.2.840.10008.1.2.4.65 | JPEG Lossless, Nonhierarchical (Process 28) | No	
-1.2.840.10008.1.2.4.66 | JPEG Lossless, Nonhierarchical (Process 29) | No	
+1.2.840.10008.1.2.4.58 | JPEG Lossless, Nonhierarchical (Processes 15)	Retired	| No(Retired)		
+1.2.840.10008.1.2.4.59 | JPEG Extended, Hierarchical (Processes 16 & 18)	| No(Retired)		
+1.2.840.10008.1.2.4.60 | JPEG Extended, Hierarchical (Processes 17 & 19)
+1.2.840.10008.1.2.4.61 | JPEG Spectral Selection, Hierarchical (Processes 20 & 22)	| No(Retired)		
+1.2.840.10008.1.2.4.62 | JPEG Spectral Selection, Hierarchical (Processes 21 & 23)	| No(Retired)		
+1.2.840.10008.1.2.4.63 | JPEG Full Progression, Hierarchical (Processes 24 & 26)	| No(Retired)		
+1.2.840.10008.1.2.4.64 | JPEG Full Progression, Hierarchical (Processes 25 & 27)	| No(Retired)		
+1.2.840.10008.1.2.4.65 | JPEG Lossless, Nonhierarchical (Process 28) | No(Retired)		
+1.2.840.10008.1.2.4.66 | JPEG Lossless, Nonhierarchical (Process 29) | No(Retired)		
 1.2.840.10008.1.2.4.70 | JPEG Lossless, Nonhierarchical, First- Order Prediction | No
 1.2.840.10008.1.2.4.80 | JPEG-LS Lossless Image Compression	 | No
 1.2.840.10008.1.2.4.81 | JPEG-LS Lossy (Near- Lossless) Image Compression | No
