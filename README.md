@@ -15,6 +15,7 @@ a javascript powerfull dicom decoder
 1.2.840.10008.1.2.1.99 | Deflated Explicit VR Little Endian | Yes
 1.2.840.10008.1.2.2 | Explicit VR Big Endian | Yes
 1.2.840.10008.1.2.4.50 | JPEG Baseline (Process 1) | Yes 
+1.2.840.10008.1.2.4.70 | JPEG Lossless, Nonhierarchical, First- Order Prediction | Yes
 1.2.840.10008.1.2.4.80 | JPEG-LS Lossless Image Compression	 | Yes
 1.2.840.10008.1.2.4.90 | JPEG 2000 Image Compression (Lossless Only) | Yes 
 1.2.840.10008.1.2.4.91 | JPEG 2000 Image Compression	 | Yes
@@ -34,7 +35,6 @@ a javascript powerfull dicom decoder
 1.2.840.10008.1.2.4.64 | JPEG Full Progression, Hierarchical (Processes 25 & 27)	| No(Retired)		
 1.2.840.10008.1.2.4.65 | JPEG Lossless, Nonhierarchical (Process 28) | No(Retired)		
 1.2.840.10008.1.2.4.66 | JPEG Lossless, Nonhierarchical (Process 29) | No(Retired)		
-1.2.840.10008.1.2.4.70 | JPEG Lossless, Nonhierarchical, First- Order Prediction | No
 1.2.840.10008.1.2.4.81 | JPEG-LS Lossy (Near- Lossless) Image Compression | No
 1.2.840.10008.1.2.4.92 | JPEG 2000 Part 2 Multicomponent Image Compression (Lossless Only) | No
 1.2.840.10008.1.2.4.93 | JPEG 2000 Part 2 Multicomponent Image Compression | No
