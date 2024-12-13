@@ -16,7 +16,7 @@ a javascript powerfull dicom decoder
 1.2.840.10008.1.2.2 | Explicit VR Big Endian | Yes
 1.2.840.10008.1.2.4.50 | JPEG Baseline (Process 1) | Yes 
 1.2.840.10008.1.2.4.90 | JPEG 2000 Image Compression (Lossless Only) | Yes 
-1.2.840.10008.1.2.4.91	JPEG 2000 Image Compression	 | Yes
+1.2.840.10008.1.2.4.91 | JPEG 2000 Image Compression	 | Yes
 1.2.840.10008.1.2.4.51 | JPEG Baseline (Processes 2 & 4) | No	 
 1.2.840.10008.1.2.4.52 | JPEG Extended (Processes 3 & 5) | No
 1.2.840.10008.1.2.4.53 | JPEG Spectral Selection, Nonhierarchical (Processes 6 & 8)	| No	
