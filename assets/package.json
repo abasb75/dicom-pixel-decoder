@@ -1,7 +1,7 @@
 {
-    "name": "@abasb75/dicom-parser",
-    "version": "0.0.0-test2",
-    "description": "a javascript powerfull dicom parser",
+    "name": "@abasb75/dicom-pixel-decoder",
+    "version": "0.0.0-test0",
+    "description": "a javascript powerfull dicom pixel data decoder",
     "main": "index.js",
     "type": "module",
     "types": "index.d.ts",

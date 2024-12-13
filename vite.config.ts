@@ -4,7 +4,7 @@ import commonjs from 'vite-plugin-commonjs'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/dicom-parser',
+  base: '/dicom-pixel-decoder',
   plugins: [
     react(),
     commonjs(),
