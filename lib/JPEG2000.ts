@@ -16,9 +16,7 @@ class JPEG2000{
                 iterations:1,
             }
         );
-
-        console.log(decoded);
-
+        
         if(!(decoded.decodedBuffer instanceof Uint8Array)){
             return null;
         }
