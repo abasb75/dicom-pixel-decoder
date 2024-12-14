@@ -26,7 +26,7 @@ class Decoder {
                 return await JPEGLS.decode(pixelData);
             case "1.2.840.10008.1.2.4.90":
             case "1.2.840.10008.1.2.4.91":
-                return await JPEG2000.decode(pixelData,options);
+                return await JPEG2000.decode(pixelData);
             default:
                 throw new Error(`${transferSyntaxUID} Transfer syntax not supported!`)
         }

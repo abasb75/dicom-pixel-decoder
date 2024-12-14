@@ -1,9 +1,8 @@
-import { DecodeOptions } from "./types";
 import { decode } from "@abasb75/jpeg2000-decoder";
 
 class JPEG2000{
 
-    static async decode(pixelData:DataView,dataset:DecodeOptions){
+    static async decode(pixelData:DataView){
 
         let arrayBuffer = pixelData.buffer;
         let offset = pixelData.byteOffset;
