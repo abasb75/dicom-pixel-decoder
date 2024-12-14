@@ -16,29 +16,20 @@ class JPEGLS{
             return null;
         }
 
-        const bitsAllocated = decoded.frameInfo.bitsPerSample;
-        switch(bitsAllocated){
-            case  8:
-                return new Uint8Array(
-                    decoded.decodedBuffer.buffer,
-                    decoded.decodedBuffer.byteOffset,
-                    decoded.decodedBuffer.byteLength,
-                );
-            case 16:
-                return new Int16Array(
-                    decoded.decodedBuffer.buffer,
-                    decoded.decodedBuffer.byteOffset,
-                    decoded.decodedBuffer.byteLength/2,
-                );
-            case 32:
-                return new Float32Array(
-                    decoded.decodedBuffer.buffer,
-                    decoded.decodedBuffer.byteOffset,
-                    decoded.decodedBuffer.byteLength/4,
-                )
-            default:
-                return new Uint8Array(arrayBuffer);
+        const bitsPerSample = decoded.frameInfo.bitsPerSample;
+        if(bitsPerSample > 8) {
+            return new Int16Array(
+                decoded.decodedBuffer.buffer,
+                decoded.decodedBuffer.byteOffset,
+                decoded.decodedBuffer.byteLength/2,
+            );
         }
+
+        return new Uint8Array(
+            decoded.decodedBuffer.buffer,
+            decoded.decodedBuffer.byteOffset,
+            decoded.decodedBuffer.byteLength,
+        );
 
     }
 }

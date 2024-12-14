@@ -1,10 +1,11 @@
 
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useCallback, useRef, useState } from 'react';
 
-// import { loadAndParseFromFiles, loadAndParseFromUrl } from '@abasb75/dicom-parser'; 
-import { loadAndParseFromFiles, loadAndParseFromUrl } from '../../dicom-parser/lib/index'; 
+import { loadAndParseFromFiles, loadAndParseFromUrl } from '@abasb75/dicom-parser'; 
+// import { loadAndParseFromFiles, loadAndParseFromUrl } from '../../dicom-parser/lib/index'; 
 import decode from '@lib/index';
 import Canvas2D from './draw/Canvas2D';
+import { useDropzone } from 'react-dropzone';
 
 function App() {
 
@@ -13,6 +14,16 @@ function App() {
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const onDrop = useCallback((acceptedFiles:any) => {
+    if(!acceptedFiles && acceptedFiles.length<1){
+      return;
+    }
+    const dcmFile = acceptedFiles[0];
+    handleDcmfile(dcmFile);
+    
+  }, [])
+  const {getRootProps, getInputProps} = useDropzone({onDrop})
   
   const parseInputUrl = ()=>{
     const url = inputRef.current?.value;
@@ -28,41 +39,46 @@ function App() {
   }
 
   const fileInputChange = (event:ChangeEvent<HTMLInputElement>)=>{
-    
     if (event.target.files && event.target.files[0] ) {
       const dcmFile = event.target.files[0];
-      const start = Date.now();
-      loadAndParseFromFiles(dcmFile).then(async (dataset)=>{
-        
-        if(!canvasRef.current) return;
-        console.log(dataset);
-        console.log(dataset.string(0x0028,0x0010))
-        const pixelData = await dataset.getPixelData(0);
-        console.log(pixelData);
-        const decodedPixels = await decode(
-          pixelData,
-          {
-            bitsAllocated:dataset.pixelModule.bitsAllocated as number,
-            littleEndian:dataset.littleEndian,
-            pixelRepresentation:dataset.pixelRepresentation as number,
-            transferSyntaxUID:dataset.transferSyntaxUID,
-            samplesPerPixel:dataset.pixelModule.samplesPerPixel as number,
-          }
-        );
-        console.log(`decode time: ${Date.now() - start}`)
-        await Canvas2D.draw(canvasRef.current,decodedPixels,dataset);
-        console.log(`render time: ${Date.now() - start}`)
-      });
-
-        
+      handleDcmfile(dcmFile);
     }
+  }
 
+  const handleDcmfile = (dcmFile:File) => {
+    const start = Date.now();
+    loadAndParseFromFiles(dcmFile).then(async (dataset)=>{
+      console.log(dataset);
+      if(!canvasRef.current) return;
+      const pixelData = await dataset.getPixelData(0);
+      const endParse = Date.now();
+      console.log(`parse time: ${endParse - start}`)
+      const decodedPixels = await decode(
+        pixelData,
+        {
+          bitsAllocated:dataset.pixelModule.bitsAllocated as number,
+          littleEndian:dataset.littleEndian,
+          pixelRepresentation:dataset.pixelRepresentation as number,
+          transferSyntaxUID:dataset.transferSyntaxUID,
+          samplesPerPixel:dataset.pixelModule.samplesPerPixel as number,
+        }
+      );
+      const endDecoded = Date.now();
+      console.log(`decode time: ${endDecoded - endParse}`)
+      await Canvas2D.draw(canvasRef.current,decodedPixels,dataset);
+      console.log(`render time: ${Date.now() - endDecoded}`)
+    });
   }
 
   return (
-    <>
+    <div {...getRootProps({
+      onClick: event => event.stopPropagation(),
+    })}>
+      <input {...getInputProps()} />
       <div className='w-full h-[100vh] bg-slate-950 flex items-center justify-center flex-col'>
-        <div className='w-full h-full max-w-[95%] max-h-[95%]'>
+        <div 
+          className='w-full h-full max-w-[95%] max-h-[95%]'
+        >
           <div className='w-full bg-black rounded border-slate-600 border-2 h-[calc(100%_-_60px)] flex flex-row'>
             <div className='w-full'>
               <div className='h-[50px] w-full bg-black flex'>
@@ -107,7 +123,7 @@ function App() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 
 }
