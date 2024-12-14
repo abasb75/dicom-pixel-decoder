@@ -19,13 +19,13 @@ a javascript powerfull dicom decoder
 1.2.840.10008.1.2.4.80 | JPEG-LS Lossless Image Compression	 | Yes
 1.2.840.10008.1.2.4.90 | JPEG 2000 Image Compression (Lossless Only) | Yes 
 1.2.840.10008.1.2.4.91 | JPEG 2000 Image Compression	 | Yes
+1.2.840.10008.1.2.4.57 | JPEG Lossless, Nonhierarchical (Processes 14) | Untested
 1.2.840.10008.1.2.4.51 | JPEG Baseline (Processes 2 & 4) | No	 
 1.2.840.10008.1.2.4.52 | JPEG Extended (Processes 3 & 5) | No(Retired)
 1.2.840.10008.1.2.4.53 | JPEG Spectral Selection, Nonhierarchical (Processes 6 & 8)	| No(Retired)
 1.2.840.10008.1.2.4.54 | JPEG Spectral Selection, Nonhierarchical (Processes 7 & 9)	| No(Retired)	
 1.2.840.10008.1.2.4.55 | JPEG Full Progression, Nonhierarchical (Processes 10 & 12)	| No(Retired)	
 1.2.840.10008.1.2.4.56 | JPEG Full Progression, Nonhierarchical (Processes 11 & 13)	| No(Retired)	
-1.2.840.10008.1.2.4.57 | JPEG Lossless, Nonhierarchical (Processes 14)	 	| No	
 1.2.840.10008.1.2.4.58 | JPEG Lossless, Nonhierarchical (Processes 15)	Retired	| No(Retired)		
 1.2.840.10008.1.2.4.59 | JPEG Extended, Hierarchical (Processes 16 & 18)	| No(Retired)		
 1.2.840.10008.1.2.4.60 | JPEG Extended, Hierarchical (Processes 17 & 19)

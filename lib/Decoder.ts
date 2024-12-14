@@ -19,6 +19,7 @@ class Decoder {
                 return UncompressDecoderr.decode(pixelData,options);
             case "1.2.840.10008.1.2.4.50":
                 return await JPEGBaselineLossyProcess1_8bit.decode(pixelData,options);
+            case "1.2.840.10008.1.2.4.57":
             case "1.2.840.10008.1.2.4.70":
                 return JPEGLossLess.decode(pixelData,options);
             case "1.2.840.10008.1.2.4.80":
