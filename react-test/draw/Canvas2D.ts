@@ -9,8 +9,9 @@ class Canvas2D {
         if(!pixelDatas.length) return;
 
         const pixelData = Canvas2D._scalePixelData(pixelDatas,dataset);
-        
-        const {min,max,windowCenter,windowWidth} = Canvas2D._getLUT(pixelData,dataset);
+
+        let {min,max,windowCenter,windowWidth} = Canvas2D._getLUT(pixelData,dataset);
+        console.log(min,max,windowCenter,windowWidth,pixelData)
         canvas.width = dataset.pixelModule.columns || 0;
         canvas.height= dataset.pixelModule.rows || 0;
 

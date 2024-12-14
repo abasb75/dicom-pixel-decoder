@@ -10,6 +10,8 @@ class UncompressDecoderr{
         let offset = pixelData.byteOffset;
         const length = pixelData.byteLength;
         const bitsAllocated = dataset.bitsAllocated;
+        console.log('bitsAllocated',bitsAllocated);
+        console.log('pixelRepresentation',dataset.pixelRepresentation);
         switch(bitsAllocated){
             case  8:
                 return UncompressDecoderr._endianFixer(
@@ -43,30 +45,10 @@ class UncompressDecoderr{
         if(!bigEndian){
             return data;
         }
-        if(data instanceof Uint16Array){
-            const _data = new Uint16Array(data.length);
-            for(let i=0;i<_data.length;i++){
-                _data[i] = ((data[i] & 0xFF) << 8)| ((data[i] >> 8) & 0xF)
+        if(data instanceof Uint16Array || data instanceof Int16Array){
+            for(let i=0;i<data.byteLength;i++){
+                data[i] = ((data[i] & 0xff) << 8) | ((data[i] >> 8) & 0xff);
             }
-            return _data;
-        }else if(data instanceof Int16Array){
-            const _data = new Int16Array(data.length);
-            for(let i=0;i<_data.length;i++){
-                _data[i] = ((data[i] & 0xFF) << 8)| ((data[i] >> 8) & 0xF)
-            }
-            return _data;
-        }else if(data instanceof Uint32Array){
-            const _data = new Uint32Array(data.length);
-            for(let i=0;i<_data.length;i++){
-                _data[i] = ((data[i] & 0xFF) << 24) | ((data[i] & 0xFF00) << 8) | ((data[i] >> 8) & 0xFF00) | ((data[i] >> 24) & 0xFF);
-            }
-            return _data;
-        }else if(data instanceof Float32Array){
-            const _data = new Float32Array(data.length);
-            for(let i=0;i<_data.length;i++){
-                _data[i] = ((data[i] & 0xFF) << 24) | ((data[i] & 0xFF00) << 8) | ((data[i] >> 8) & 0xFF00) | ((data[i] >> 24) & 0xFF);
-            }
-            return _data;
         }
         return data;
     }

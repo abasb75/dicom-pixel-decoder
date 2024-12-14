@@ -58,7 +58,7 @@ function App() {
         {
           bitsAllocated:dataset.pixelModule.bitsAllocated as number,
           littleEndian:dataset.littleEndian,
-          pixelRepresentation:dataset.pixelRepresentation as number,
+          pixelRepresentation:dataset.pixelModule.pixelRepresentation as number,
           transferSyntaxUID:dataset.transferSyntaxUID,
           samplesPerPixel:dataset.pixelModule.samplesPerPixel as number,
         }
