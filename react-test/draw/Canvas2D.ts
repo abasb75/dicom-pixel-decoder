@@ -9,7 +9,7 @@ class Canvas2D {
         if(!pixelDatas.length) return;
 
         const pixelData = Canvas2D._scalePixelData(pixelDatas,dataset);
-
+        console.log('scaled_pixel_data',pixelData);
         let {min,max,windowCenter,windowWidth} = Canvas2D._getLUT(pixelData,dataset);
         console.log(min,max,windowCenter,windowWidth,pixelData)
         canvas.width = dataset.pixelModule.columns || 0;
@@ -77,10 +77,10 @@ class Canvas2D {
         pixelData: PixelArray,
         dataset:Dataset
       ): PixelArray {
-        const arrayLength = pixelData.length;
-        const scalingModule = dataset.scalingModule;
 
+        const scalingModule = dataset.scalingModule;
         const { rescaleSlope, rescaleIntercept, modality } = scalingModule;
+
         if(!rescaleIntercept 
             || !rescaleIntercept 
             || typeof rescaleSlope!=="number" 
@@ -88,7 +88,8 @@ class Canvas2D {
         ){
             return pixelData;
         }
-      
+        
+        console.log('pixel-data-object',rescaleSlope,rescaleIntercept);
         if (
           modality === 'PT'
         //   typeof suvbw === 'number' &&
@@ -98,7 +99,7 @@ class Canvas2D {
         //     array[i] = suvbw * (array[i] * rescaleSlope + rescaleIntercept);
         //   }
         } else {
-          for (let i = 0; i < arrayLength; i++) {
+          for (let i = 0; i < pixelData.length; i++) {
             pixelData[i] = pixelData[i] * rescaleSlope + rescaleIntercept;
           }
         }

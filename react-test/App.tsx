@@ -51,6 +51,8 @@ function App() {
       console.log(dataset);
       if(!canvasRef.current) return;
       const pixelData = await dataset.getPixelData(0);
+      console.log(pixelData);
+
       const endParse = Date.now();
       console.log(`parse time: ${endParse - start}`)
       const decodedPixels = await decode(
@@ -63,6 +65,7 @@ function App() {
           samplesPerPixel:dataset.pixelModule.samplesPerPixel as number,
         }
       );
+      console.log('decodedPixels',decodedPixels);
       const endDecoded = Date.now();
       console.log(`decode time: ${endDecoded - endParse}`)
       await Canvas2D.draw(canvasRef.current,decodedPixels,dataset);

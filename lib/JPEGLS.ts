@@ -11,12 +11,12 @@ class JPEGLS{
         const decoded = await decode(
             arrayBuffer.slice(offset,length),
         );
-
+        console.log('decoded',decoded);
         if(!(decoded.decodedBuffer instanceof Uint8Array)){
             return null;
         }
-
         const bitsPerSample = decoded.frameInfo.bitsPerSample;
+        
         if(bitsPerSample > 8) {
             return new Int16Array(
                 decoded.decodedBuffer.buffer,
@@ -24,7 +24,6 @@ class JPEGLS{
                 decoded.decodedBuffer.byteLength/2,
             );
         }
-
         return new Uint8Array(
             decoded.decodedBuffer.buffer,
             decoded.decodedBuffer.byteOffset,

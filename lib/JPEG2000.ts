@@ -1,8 +1,9 @@
 import { decode } from "@abasb75/jpeg2000-decoder";
+import { DecodeOptions } from "./types";
 
 class JPEG2000{
 
-    static async decode(pixelData:DataView){
+    static async decode(pixelData:DataView,options:DecodeOptions){
 
         let arrayBuffer = pixelData.buffer;
         let offset = pixelData.byteOffset;
@@ -15,6 +16,8 @@ class JPEG2000{
         if(!(decoded.decodedBuffer instanceof Uint8Array)){
             return null;
         }
+
+        console.log('frameInfo',decoded.frameInfo);
 
         const bitsPerSample = decoded.frameInfo.bitsPerSample;
         if(bitsPerSample>8){
@@ -40,9 +43,9 @@ class JPEG2000{
                 );
             }else{
                 return new Uint8Array(
-                        decoded.decodedBuffer.buffer,
-                        decoded.decodedBuffer.byteOffset,
-                        decoded.decodedBuffer.byteLength,
+                    decoded.decodedBuffer.buffer,
+                    decoded.decodedBuffer.byteOffset,
+                    decoded.decodedBuffer.byteLength,
                 );
             }
         }

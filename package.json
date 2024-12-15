@@ -16,6 +16,7 @@
     "@abasb75/charls-decoder": "^2.4.2",
     "@abasb75/dicom-parser": "^0.0.0-test11",
     "@abasb75/jpeg2000-decoder": "^2.5.2-u1",
+    "@abasb75/openjpeg": "^2.5.0",
     "@abasb75/turbojpeg-decoder": "^3.0.4",
     "jpeg-js": "^0.4.4",
     "jpeg-lossless-decoder-js": "^2.1.2",
