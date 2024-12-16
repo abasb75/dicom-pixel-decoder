@@ -1,8 +1,8 @@
 
 import { ChangeEvent, useCallback, useRef, useState } from 'react';
 
-import { loadAndParseFromFiles, loadAndParseFromUrl } from '@abasb75/dicom-parser'; 
-// import { loadAndParseFromFiles, loadAndParseFromUrl } from '../../dicom-parser/lib/index'; 
+// import { loadAndParseFromFiles, loadAndParseFromUrl } from '@abasb75/dicom-parser'; 
+import { loadAndParseFromFiles, loadAndParseFromUrl } from '../../dicom-parser/lib/index'; 
 import decode from '@lib/index';
 import Canvas2D from './draw/Canvas2D';
 import { useDropzone } from 'react-dropzone';
@@ -55,7 +55,7 @@ function App() {
 
       const endParse = Date.now();
       console.log(`parse time: ${endParse - start}`)
-      const decodedPixels = await decode(
+      const image = await decode(
         pixelData,
         {
           bitsAllocated:dataset.pixelModule.bitsAllocated as number,
@@ -63,13 +63,23 @@ function App() {
           pixelRepresentation:dataset.pixelModule.pixelRepresentation as number,
           transferSyntaxUID:dataset.transferSyntaxUID,
           samplesPerPixel:dataset.pixelModule.samplesPerPixel as number,
+          columns:dataset.pixelModule.columns,
+          rows:dataset.pixelModule.rows,
+          rescaleIntercept:dataset.scalingModule.rescaleIntercept,
+          rescaleSlope:dataset.scalingModule.rescaleSlope,
+          modality:dataset.scalingModule.modality,
+          windowWidth:dataset.voiLUTModule.windowWidth,
+          windowCenter:dataset.voiLUTModule.windowCenter,
         }
       );
-      console.log('decodedPixels',decodedPixels);
+      console.log('decodedPixels',image);
       const endDecoded = Date.now();
       console.log(`decode time: ${endDecoded - endParse}`)
-      await Canvas2D.draw(canvasRef.current,decodedPixels,dataset);
-      console.log(`render time: ${Date.now() - endDecoded}`)
+      if(image){
+        await Canvas2D.draw(canvasRef.current,image);
+        console.log(`render time: ${Date.now() - endDecoded}`)
+      }
+      
     });
   }
 

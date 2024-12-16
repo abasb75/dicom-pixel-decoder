@@ -11,19 +11,19 @@ class JPEGLossLess{
             new Uint8Array(pixelData.buffer),
             pixelData.byteOffset,
             pixelData.byteLength,
-        );
-
+        )
+        
         if(options.bitsAllocated>8){
-            if(options.pixelRepresentation === 0){
-                return new Uint16Array(decoded.buffer);
+            if(options.pixelRepresentation === 1){
+                return new Int16Array(decoded.buffer);
             }
-            return new Int16Array(decoded.buffer);
+            return new Uint16Array(decoded.buffer);
         }
-        if(options.pixelRepresentation === 0){
-            return decoded;
+        if(options.pixelRepresentation === 1){
+            return new Int8Array(decoded.buffer);
         }
-        return new Int8Array(decoded.buffer);
-
+        return decoded;
+        
     }
 }
 
