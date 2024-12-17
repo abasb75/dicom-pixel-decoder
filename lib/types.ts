@@ -11,7 +11,7 @@ export interface DecodeOptions {
     modality:string;
     windowWidth:number|undefined;
     windowCenter:number|undefined;
-
+    planarConfiguration:number|undefined;
 }
 
-export type PixelArray = Uint32Array|Uint16Array|Uint8Array|Int32Array|Int16Array|Int8Array;
+export type PixelArray = Float32Array|Uint16Array|Uint8Array|Int32Array|Int16Array|Int8Array;

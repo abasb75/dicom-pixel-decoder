@@ -1,69 +1,63 @@
 import { decode } from "@abasb75/turbojpeg-decoder";
 import { DecodeOptions } from "./types";
-const jpeg = require('jpeg-js');
-
+import JpegImage from '@abasb75/jpegjs'; 
 
 class JPEGBaselineLossyProcess1_8bit{
     static async decode(pixelData:DataView,options:DecodeOptions){
+        const data = await JPEGBaselineLossyProcess1_8bit.turboJpeg(pixelData);
         try{
             if (
                 options.bitsAllocated === 8 &&
                 [3,4].includes(options.samplesPerPixel as number)
             ) {
-                // decode with browser option.
-                console.log("browser");
                 return JPEGBaselineLossyProcess1_8bit.browser(pixelData);
             }else{
-                console.log("jpeg-js");
-                return JPEGBaselineLossyProcess1_8bit.jpegJS(pixelData);
+                return JPEGBaselineLossyProcess1_8bit.jpegJS(pixelData,options);
             }
         }catch{
-            console.log("turbo-jpeg");
             const data = await JPEGBaselineLossyProcess1_8bit.turboJpeg(pixelData);
             return data;
         }
         
     }
 
-    static async jpegJS(pixelData:DataView){
-        const decoded = jpeg.decode(pixelData.buffer,{useTArray: true});
-        if(decoded?.data){
-            return decoded.data;
+    static async jpegJS(pixelData:DataView,options:DecodeOptions){
+        //@ts-ignore
+        const jpeg = new JpegImage();
+        jpeg.parse(new Uint8Array(pixelData.buffer));
+        if(options.bitsAllocated>8){
+            return jpeg.getData16(options.columns,options.rows);
         }
-        return null;
+        return jpeg.getData(options.columns,options.rows);
     }
 
     static async browser(pixelData:DataView){
-        try{
-            const createImage = (imageData:any)=>new Promise<HTMLImageElement>((resolve,reject)=>{
-                var img = document.createElement('img');
-                img.src = imageData;
-                img.onload = ()=>{
-                    resolve(img);
-                }
-                img.onerror = ()=>{
-                    reject();
-                }
-            });
 
-            var arrayBufferView = new Uint8Array( pixelData.buffer );
-            var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
-            var urlCreator = window.URL || window.webkitURL;
-            var imageUrl = urlCreator.createObjectURL( blob );
-            const img = await createImage(imageUrl);
+        const createImage = (imageData:any)=>new Promise<HTMLImageElement>((resolve,reject)=>{
+            var img = document.createElement('img');
+            img.src = imageData;
+            img.onload = ()=>{
+                resolve(img);
+            }
+            img.onerror = ()=>{
+                reject();
+            }
+        });
 
-            const canvas = document.createElement('canvas') as HTMLCanvasElement;
-            canvas.height = img.height;
-            canvas.width = img.width;
-            const context = canvas.getContext('2d');
-            context?.drawImage(img, 0, 0);
+        var arrayBufferView = new Uint8Array( pixelData.buffer );
+        var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
+        var urlCreator = window.URL || window.webkitURL;
+        var imageUrl = urlCreator.createObjectURL( blob );
+        const img = await createImage(imageUrl);
 
-            const imageData = context?.getImageData(0,0,img.width,img.height);
-            return new Uint8Array(imageData?.data?.buffer as ArrayBufferLike);
-        }catch{
-            return JPEGBaselineLossyProcess1_8bit.jpegJS(pixelData);
-        }
+        const canvas = document.createElement('canvas') as HTMLCanvasElement;
+        canvas.height = img.height;
+        canvas.width = img.width;
+        const context = canvas.getContext('2d');
+        context?.drawImage(img, 0, 0);
 
+        const imageData = context?.getImageData(0,0,img.width,img.height);
+        return new Uint8Array(imageData?.data?.buffer as ArrayBufferLike);
     }
 
     static async turboJpeg(pixelData:DataView){

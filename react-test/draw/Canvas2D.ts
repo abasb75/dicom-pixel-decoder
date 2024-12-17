@@ -46,7 +46,7 @@ class Canvas2D {
     private static _calcPixel(pixel:number,min:number,max:number,windowWidth:number,windowCenter:number){
         if(max <= pixel) return 255;
         else if( min >= pixel) return 0;
-        else return (Math.round(pixel - windowCenter - 0.5)/(windowWidth-1)+0.5)*255;
+        else return ((pixel - windowCenter)/(windowWidth)+0.5)*255;
     }
 
 }

@@ -31,10 +31,12 @@ class UncompressDecoderr{
                     );
                 }
             case 32:
-                return UncompressDecoderr._endianFixer(
-                    new Float32Array(arrayBuffer, offset, length / 4),
-                    !dataset.littleEndian
-                );
+                console.log('float 32 array')
+                return new Float32Array(arrayBuffer,offset,length/4);
+                // return UncompressDecoderr._endianFixer(
+                    
+                //     !dataset.littleEndian
+                // );
             default:
                 return new Uint8Array(arrayBuffer);
         }
@@ -42,6 +44,8 @@ class UncompressDecoderr{
     }
 
     private static _endianFixer(data:PixelArray,bigEndian:boolean=false){
+
+        console.log('bigEndian',bigEndian)
         if(!bigEndian){
             return data;
         }

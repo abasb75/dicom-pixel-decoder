@@ -14,10 +14,12 @@
   },
   "dependencies": {
     "@abasb75/charls-decoder": "^2.4.2",
-    "@abasb75/dicom-parser": "^0.0.0-test11",
+    "@abasb75/dicom-parser": "^0.0.0-test17",
     "@abasb75/jpeg2000-decoder": "^2.5.2-u1",
+    "@abasb75/jpegjs": "^1.0.0",
     "@abasb75/openjpeg": "^2.5.0",
     "@abasb75/turbojpeg-decoder": "^3.0.4",
+    "dicom-rle": "^0.0.10",
     "jpeg-js": "^0.4.4",
     "jpeg-lossless-decoder-js": "^2.1.2",
     "npm": "^10.9.1",

@@ -6,6 +6,7 @@ import { loadAndParseFromFiles, loadAndParseFromUrl } from '../../dicom-parser/l
 import decode from '@lib/index';
 import Canvas2D from './draw/Canvas2D';
 import { useDropzone } from 'react-dropzone';
+import { DecodeOptions } from '@lib/types';
 
 function App() {
 
@@ -58,19 +59,12 @@ function App() {
       const image = await decode(
         pixelData,
         {
-          bitsAllocated:dataset.pixelModule.bitsAllocated as number,
+          ...dataset.pixelModule,
+          ...dataset.scalingModule,
+          ...dataset.voiLUTModule,
           littleEndian:dataset.littleEndian,
-          pixelRepresentation:dataset.pixelModule.pixelRepresentation as number,
           transferSyntaxUID:dataset.transferSyntaxUID,
-          samplesPerPixel:dataset.pixelModule.samplesPerPixel as number,
-          columns:dataset.pixelModule.columns,
-          rows:dataset.pixelModule.rows,
-          rescaleIntercept:dataset.scalingModule.rescaleIntercept,
-          rescaleSlope:dataset.scalingModule.rescaleSlope,
-          modality:dataset.scalingModule.modality,
-          windowWidth:dataset.voiLUTModule.windowWidth,
-          windowCenter:dataset.voiLUTModule.windowCenter,
-        }
+        } as DecodeOptions
       );
       console.log('decodedPixels',image);
       const endDecoded = Date.now();

@@ -1,5 +1,6 @@
 import DecodedImage from "./DecodedImage";
 import JPEG2000 from "./JPEG2000";
+import JPEGBaselineLossyProcess2_12bit from "./JPEGBaselineLossyProcess2_12bit";
 import JPEGBaselineLossyProcess1_8bit from "./JPEGBaselineLossyProcess1_8bit";
 import JPEGLS from "./JPEGLS";
 import JPEGLossLess from "./JPEGLossLess";
@@ -9,6 +10,7 @@ import getIsArrayPixelHasValidType from "./Utilities/getIsArrayPixelHasValidType
 import getMinMax from "./Utilities/getMinMax";
 import getMinMaxAfterScale from "./Utilities/getMinMaxAfterScale";
 import { DecodeOptions } from "./types";
+import RLE from "./RLE";
 
 class Decoder {
 
@@ -25,7 +27,24 @@ class Decoder {
             case "1.2.840.10008.1.2.4.50":
                 decodedPixelData = await JPEGBaselineLossyProcess1_8bit.decode(pixelData,options);
                 break;
+            case "1.2.840.10008.1.2.4.51":
+            case "1.2.840.10008.1.2.4.52": /**no tested */
+            case "1.2.840.10008.1.2.4.53":
+            case "1.2.840.10008.1.2.4.54": /**no tested */
+            case "1.2.840.10008.1.2.4.55":
+            case "1.2.840.10008.1.2.4.56": /**no tested */
+            case "1.2.840.10008.1.2.4.58": /**no tested */
+            case "1.2.840.10008.1.2.4.59": /**no tested */
+            case "1.2.840.10008.1.2.4.60": /**no tested */
+            case "1.2.840.10008.1.2.4.61": /**no tested */
+            case "1.2.840.10008.1.2.4.62": /**no tested */
+            case "1.2.840.10008.1.2.4.63": /**no tested */
+            case "1.2.840.10008.1.2.4.64": /**no tested */
+                decodedPixelData = await JPEGBaselineLossyProcess2_12bit.decode(pixelData,options);
+                break;
             case "1.2.840.10008.1.2.4.57":
+            case "1.2.840.10008.1.2.4.65": /**no tested */
+            case "1.2.840.10008.1.2.4.66": /**no tested */
             case "1.2.840.10008.1.2.4.70":
                 decodedPixelData = await JPEGLossLess.decode(pixelData,options);
                 break;
@@ -35,7 +54,12 @@ class Decoder {
                 break;
             case "1.2.840.10008.1.2.4.90":
             case "1.2.840.10008.1.2.4.91":
+            case "1.2.840.10008.1.2.4.92": /**no tested */
+            case "1.2.840.10008.1.2.4.93": /**no tested */
                 decodedPixelData = await JPEG2000.decode(pixelData,options);
+                break;
+            case "1.2.840.10008.1.2.5":
+                decodedPixelData = await RLE.decode(pixelData,options);
                 break;
             default:
                 throw new Error(`${transferSyntaxUID} Transfer syntax not supported!`);
@@ -68,7 +92,7 @@ class Decoder {
         }
         const {min,max} = image.getMinMax();
         image.windowWidth = max - min;
-        image.windowCenter = min + image.windowWidth / 2  - 0.5;
+        image.windowCenter = min + image.windowWidth / 2;
     }
 
     private static _applyScaling(image:DecodedImage,options:DecodeOptions){
@@ -91,6 +115,7 @@ class Decoder {
             rescaleIntercept
         );
 
+        console.log({minAfterScale,maxAfterScale});
         if(min === minAfterScale && max === maxAfterScale){
             return image.pixelData;
         }
@@ -100,9 +125,14 @@ class Decoder {
             minAfterScale || 0,
             maxAfterScale || 0
         );
+
         image.min = minAfterScale;
         image.max = maxAfterScale;
-        const _decodedPixelData = isValidType ? image.pixelData : changeTypedArray(image.pixelData);
+        const _decodedPixelData = isValidType ? image.pixelData : changeTypedArray(
+            image.pixelData,
+            image.min || 0,
+            image.max || 0
+        );
         for (let i=0;i<_decodedPixelData.length; i++) {
             _decodedPixelData[i] = _decodedPixelData[i] * rescaleSlope + rescaleIntercept;
         }
