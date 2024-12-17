@@ -17,8 +17,6 @@ class JPEG2000{
             return null;
         }
 
-        console.log('frameInfo',decoded.frameInfo);
-
         const bitsPerSample = decoded.frameInfo.bitsPerSample;
         if(bitsPerSample>8){
             if(decoded.frameInfo.isSigned){

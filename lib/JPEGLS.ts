@@ -11,7 +11,6 @@ class JPEGLS{
         const decoded = await decode(
             arrayBuffer.slice(offset,length),
         );
-        console.log('decoded',decoded);
         if(!(decoded.decodedBuffer instanceof Uint8Array)){
             return null;
         }

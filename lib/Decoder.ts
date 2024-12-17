@@ -28,23 +28,23 @@ class Decoder {
                 decodedPixelData = await JPEGBaselineLossyProcess1_8bit.decode(pixelData,options);
                 break;
             case "1.2.840.10008.1.2.4.51":
-            case "1.2.840.10008.1.2.4.52": /**no tested */
+            case "1.2.840.10008.1.2.4.52": /**untested */
             case "1.2.840.10008.1.2.4.53":
-            case "1.2.840.10008.1.2.4.54": /**no tested */
+            case "1.2.840.10008.1.2.4.54": /**untested */
             case "1.2.840.10008.1.2.4.55":
-            case "1.2.840.10008.1.2.4.56": /**no tested */
-            case "1.2.840.10008.1.2.4.58": /**no tested */
-            case "1.2.840.10008.1.2.4.59": /**no tested */
-            case "1.2.840.10008.1.2.4.60": /**no tested */
-            case "1.2.840.10008.1.2.4.61": /**no tested */
-            case "1.2.840.10008.1.2.4.62": /**no tested */
-            case "1.2.840.10008.1.2.4.63": /**no tested */
-            case "1.2.840.10008.1.2.4.64": /**no tested */
+            case "1.2.840.10008.1.2.4.56": /**untested */
+            case "1.2.840.10008.1.2.4.58": /**untested */
+            case "1.2.840.10008.1.2.4.59": /**untested */
+            case "1.2.840.10008.1.2.4.60": /**untested */
+            case "1.2.840.10008.1.2.4.61": /**untested */
+            case "1.2.840.10008.1.2.4.62": /**untested */
+            case "1.2.840.10008.1.2.4.63": /**untested */
+            case "1.2.840.10008.1.2.4.64": /**untested */
                 decodedPixelData = await JPEGBaselineLossyProcess2_12bit.decode(pixelData,options);
                 break;
             case "1.2.840.10008.1.2.4.57":
-            case "1.2.840.10008.1.2.4.65": /**no tested */
-            case "1.2.840.10008.1.2.4.66": /**no tested */
+            case "1.2.840.10008.1.2.4.65": /**untested */
+            case "1.2.840.10008.1.2.4.66": /**untested */
             case "1.2.840.10008.1.2.4.70":
                 decodedPixelData = await JPEGLossLess.decode(pixelData,options);
                 break;
@@ -54,8 +54,8 @@ class Decoder {
                 break;
             case "1.2.840.10008.1.2.4.90":
             case "1.2.840.10008.1.2.4.91":
-            case "1.2.840.10008.1.2.4.92": /**no tested */
-            case "1.2.840.10008.1.2.4.93": /**no tested */
+            case "1.2.840.10008.1.2.4.92": /**untested */
+            case "1.2.840.10008.1.2.4.93": /**untested */
                 decodedPixelData = await JPEG2000.decode(pixelData,options);
                 break;
             case "1.2.840.10008.1.2.5":
@@ -75,6 +75,7 @@ class Decoder {
             options.rows || 0,
             decodedPixelData,
         );
+        
         image.pixelData = Decoder._applyScaling(image,options);
         Decoder._setLUT(image,options);
         return image;

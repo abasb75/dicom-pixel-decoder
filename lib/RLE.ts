@@ -1,4 +1,3 @@
-import DicomRLEDicoder from "../tems/DicomRLEDecoder";
 import dicomRle from "dicom-rle";
 import { DecodeOptions } from "./types";
 
@@ -16,9 +15,6 @@ class RLE {
         if(!rows || !columns || !samplesPerPixel){
             return null;
         }
-
-        const segmentsCount = pixelData.getInt32(0,true);
-        console.log({segmentsCount});
 
         const decoder = new dicomRle.RleDecoder();
         const decoded =  decoder.decode(new Uint8Array(pixelData.buffer),{
