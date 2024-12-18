@@ -1,8 +1,8 @@
 
 import { ChangeEvent, useCallback, useRef, useState } from 'react';
 
-// import { loadAndParseFromFiles, loadAndParseFromUrl } from '@abasb75/dicom-parser'; 
-import { loadAndParseFromFiles, loadAndParseFromUrl } from '../../dicom-parser/lib/index'; 
+import { loadAndParseFromFiles, loadAndParseFromUrl } from '@abasb75/dicom-parser'; 
+// import { loadAndParseFromFiles, loadAndParseFromUrl } from '../../dicom-parser/lib/index'; 
 import decode from '@lib/index';
 import Canvas2D from './draw/Canvas2D';
 import { useDropzone } from 'react-dropzone';

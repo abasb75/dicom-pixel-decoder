@@ -57,13 +57,13 @@ class Decoder {
             case "1.2.840.10008.1.2.4.91":
             case "1.2.840.10008.1.2.4.92": /**untested */
             case "1.2.840.10008.1.2.4.93": /**untested */
-                decodedPixelData = await JPEG2000.decode(pixelData,options);
+                decodedPixelData = await JPEG2000.decode(pixelData);
                 break;
             case '3.2.840.10008.1.2.4.96': /**untested */
             case "1.2.840.10008.1.2.4.201":
             case "1.2.840.10008.1.2.4.202": /**untested */
             case "1.2.840.10008.1.2.4.203":
-                decodedPixelData = await HTJ2K.decode(pixelData,options);
+                decodedPixelData = await HTJ2K.decode(pixelData);
                 break;
             case "1.2.840.10008.1.2.5":
                 decodedPixelData = await RLE.decode(pixelData,options);

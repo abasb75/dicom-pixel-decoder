@@ -4,7 +4,6 @@ import JpegImage from '@abasb75/jpegjs';
 
 class JPEGBaselineLossyProcess1_8bit{
     static async decode(pixelData:DataView,options:DecodeOptions){
-        const data = await JPEGBaselineLossyProcess1_8bit.turboJpeg(pixelData);
         try{
             if (
                 options.bitsAllocated === 8 &&

@@ -29,5 +29,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
   },
-  "include": ["react-test","lib", "draw/Utitlities.ts", "tems/DicomRLEDecoder.ts"]
+  "include": ["react-test","lib", "draw/Utitlities.ts", "temps/DicomRLEDecoder.ts"]
 }

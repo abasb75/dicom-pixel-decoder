@@ -1,9 +1,8 @@
 import { decode } from "@abasb75/openjph";
-import { DecodeOptions } from "./types";
 
 class HTJ2K{
 
-    static async decode(pixelData:DataView,options:DecodeOptions){
+    static async decode(pixelData:DataView){
 
         let arrayBuffer = pixelData.buffer;
         let offset = pixelData.byteOffset;
