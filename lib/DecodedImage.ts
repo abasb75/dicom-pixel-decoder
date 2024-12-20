@@ -1,3 +1,4 @@
+import { DicomPixelModule, DicomScalingModule, DicomVOILutModule } from "./types";
 import getMinMax from "./Utilities/getMinMax";
 import { PixelArray } from "./types";
 
@@ -10,6 +11,10 @@ class DecodedImage {
     windowWidth:number|undefined;
     windowCenter:number|undefined;
     pixelData:PixelArray;
+    photometricInterpretation:string|undefined;
+    pixelModule:DicomPixelModule|undefined;
+    scalingModule:DicomScalingModule|undefined;
+    voiLUTModule:DicomVOILutModule|undefined;
     arrayType:"Int8Array"|"Uint8Array"|"Int16Array"|"Uint16Array"|"Float32Array"|undefined;
     
     constructor(

@@ -9,9 +9,14 @@ import changeTypedArray from "./Utilities/changeTypedArray";
 import getIsArrayPixelHasValidType from "./Utilities/getIsArrayPixelHasValidType";
 import getMinMax from "./Utilities/getMinMax";
 import getMinMaxAfterScale from "./Utilities/getMinMaxAfterScale";
-import { DecodeOptions } from "./types";
+import { DecodeOptions, PixelArray } from "./types";
 import RLE from "./RLE";
 import HTJ2K from "./HTJ2K";
+import ybrFullToRgba from "./Utilities/ybrFull";
+import ybrFull422ToRgba from "./Utilities/ybrFull422";
+import applyPlanerConfiguration from "./Utilities/planerConfiguration";
+import UnSyntaxed from "./UnSyntaxed";
+import invertMonochrome1 from "./Utilities/invertMonoChrome1";
 
 class Decoder {
 
@@ -23,7 +28,7 @@ class Decoder {
             case "1.2.840.10008.1.2.1":
             case "1.2.840.10008.1.2.1.99":
             case "1.2.840.10008.1.2.2":
-                decodedPixelData = UncompressDecoderr.decode(pixelData,options);
+                decodedPixelData = UncompressDecoderr.decode(pixelData);
                 break;
             case "1.2.840.10008.1.2.4.50":
                 decodedPixelData = await JPEGBaselineLossyProcess1_8bit.decode(pixelData,options);
@@ -47,7 +52,7 @@ class Decoder {
             case "1.2.840.10008.1.2.4.65": /**untested */
             case "1.2.840.10008.1.2.4.66": /**untested */
             case "1.2.840.10008.1.2.4.70":
-                decodedPixelData = await JPEGLossLess.decode(pixelData,options);
+                decodedPixelData = await JPEGLossLess.decode(pixelData);
                 break;
             case "1.2.840.10008.1.2.4.80":
             case "1.2.840.10008.1.2.4.81":
@@ -69,9 +74,12 @@ class Decoder {
                 decodedPixelData = await RLE.decode(pixelData,options);
                 break;
             default:
-                throw new Error(`${transferSyntaxUID} Transfer syntax not supported!`);
+                decodedPixelData = await UnSyntaxed.decode(pixelData,options);
         }
 
+        decodedPixelData = Decoder._toSutibleTypedArray(decodedPixelData,options);
+        if(!decodedPixelData) return null;
+        decodedPixelData = Decoder._fixSize(decodedPixelData,options);
         if(!decodedPixelData){
             return null;
         }
@@ -82,7 +90,16 @@ class Decoder {
             options.rows || 0,
             decodedPixelData,
         );
-        
+
+        if(options.pixelRepresentation === 1 && options.bitsStored){
+            for (let i = 0; i < image.pixelData.length; i++) {
+                image.pixelData[i] = (image.pixelData[i] 
+                    << (32-options.bitsStored)) >> (32-options.bitsStored);
+            }
+        }
+
+        image.photometricInterpretation = options.photometricInterpretation;
+        Decoder._applyColorSpace(image,options);
         image.pixelData = Decoder._applyScaling(image,options);
         Decoder._setLUT(image,options);
         return image;
@@ -144,11 +161,176 @@ class Decoder {
         for (let i=0;i<_decodedPixelData.length; i++) {
             _decodedPixelData[i] = _decodedPixelData[i] * rescaleSlope + rescaleIntercept;
         }
-
+        
         return _decodedPixelData;
 
     }
+
+    private static _applyColorSpace(image:DecodedImage,options:DecodeOptions){
+        if(image.photometricInterpretation === 'MONOCHROME1'){
+            image.pixelData = invertMonochrome1(
+                image
+            );
+        }
+        if(
+            ['RGB','YBR'].includes(options.photometricInterpretation) 
+            && options.planarConfiguration
+        ){
+            image.pixelData = applyPlanerConfiguration(image.pixelData);
+        }
+        if(options.photometricInterpretation === "YBR_FULL"){
+            image.pixelData = ybrFullToRgba(image.pixelData,options);
+        }else if(options.photometricInterpretation === "YBR_FULL_422"){
+            image.pixelData = ybrFull422ToRgba(image.pixelData,options);
+        }
+    }
     
+    private static _toSutibleTypedArray(pixelData:Uint8Array,options:DecodeOptions){
+        const { bitsAllocated } = options;
+        const offset = pixelData.byteOffset;
+        const length = pixelData.byteLength;
+        console.log({options,bitsAllocated,pixelData});
+        if(bitsAllocated > 32){
+            return new Float64Array(
+                pixelData.buffer,
+                offset,
+                length/8
+            );
+        }else if(bitsAllocated > 16){
+            if(options.isFloat){
+                return Decoder._endianFixer(
+                    new Float32Array(
+                        pixelData.buffer,
+                        offset,
+                        length/4,
+                    ),
+                    !options.littleEndian
+                );
+            }
+            if (options.pixelRepresentation === 0) {
+                return Decoder._endianFixer(
+                    new Uint32Array(
+                        pixelData.buffer,
+                        offset,
+                        length/4
+                    ),
+                    !options.littleEndian,
+                );    
+            }
+            return Decoder._endianFixer(
+                new Float32Array(
+                    pixelData.buffer,
+                    offset,
+                    length/4,
+                ),
+                !options.littleEndian
+            );
+        }else if(bitsAllocated > 8){
+            if (options.pixelRepresentation === 0) {
+                return Decoder._endianFixer(
+                    new Uint16Array(
+                        pixelData.buffer,
+                        offset,
+                        length/2
+                    ),
+                    !options.littleEndian,
+                );    
+            }
+            return Decoder._endianFixer(
+                new Int16Array(
+                    pixelData.buffer,
+                    offset,
+                    length/2
+                ),
+                !options.littleEndian
+            );
+        }else if(bitsAllocated===8){
+            if (options.pixelRepresentation === 0) {
+                return Decoder._endianFixer(
+                    new Uint8Array(pixelData),
+                    !options.littleEndian,
+                );    
+            }
+            return Decoder._endianFixer(
+                new Int8Array(pixelData),
+                !options.littleEndian
+            );
+        }else if(bitsAllocated === 1){
+            const buffer8 = new Uint8Array(pixelData);
+            const bits = new Uint8Array((options.rows || 0)*(options.columns || 0));
+            for(let i=0;i<buffer8.length;i++){
+                for(let j=0;j<8;j++){
+                    bits[i*8+j] = (buffer8[i] >> (j)) & 1;
+                }
+            }
+            return bits;
+        }
+    }
+
+    private static _endianFixer(data:PixelArray,bigEndian:boolean=false){
+        if(!bigEndian){
+            return data;
+        }
+        if(data instanceof Uint16Array || data instanceof Int16Array){
+            for(let i=0;i<data.byteLength;i++){
+                data[i] = ((data[i] & 0xff) << 8) | ((data[i] >> 8) & 0xff);
+            }
+        }
+        return data;
+    }
+
+    private static _fixSize(pixelData:PixelArray,options:DecodeOptions){
+        const rows = options?.rows || 0;
+        const columns = options?.columns || 0;
+        if(rows*columns === pixelData.length){
+            return pixelData;
+        }else if( 3*rows*columns === pixelData.length){
+            return pixelData;
+        }else if( 4*rows*columns === pixelData.length){
+            return pixelData;
+        }
+
+        let newLen = null;
+        if(pixelData.length<rows*columns){
+            newLen = columns*rows;
+        }else if(pixelData.length<3*rows*columns){
+            newLen = 3*columns*rows;
+        }else{
+            newLen = 4*columns*rows;
+        }
+
+        let newPixelsArray = null;
+        let minimum = 0;
+        if(pixelData instanceof Int8Array){
+            newPixelsArray = new Int8Array(newLen);
+            minimum = -128;
+        }else if(pixelData instanceof Uint8Array){
+            newPixelsArray = new Uint8Array(newLen);
+        }else if(pixelData instanceof Int16Array){
+            newPixelsArray = new Int16Array(newLen);
+            minimum = -32768;
+        }else if(pixelData instanceof Uint16Array){
+            newPixelsArray = new Uint16Array(newLen);
+        }else if(pixelData instanceof Int32Array){
+            newPixelsArray = new Int32Array(newLen);
+            minimum = -2147483648;
+        }else if(pixelData instanceof Uint32Array){
+            newPixelsArray = new Uint32Array(newLen);
+        }else if(pixelData instanceof Float32Array){
+            newPixelsArray = new Float32Array(newLen);
+            minimum = -3.4e38;
+        }else if(pixelData instanceof Float64Array){
+            newPixelsArray = new Float64Array(newLen);
+            minimum = -1.8e308;
+        }
+        if(!newPixelsArray) return pixelData;
+        for(let i=0;i<newLen;i++){
+            newPixelsArray[i] = (i<pixelData.length) ? pixelData[i] : minimum;
+        }
+
+        return newPixelsArray;
+    }
 }
+
 
 export default Decoder;

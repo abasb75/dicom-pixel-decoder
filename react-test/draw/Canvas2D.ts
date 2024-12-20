@@ -3,13 +3,16 @@ import DecodedImage from "@lib/DecodedImage";
 class Canvas2D {
 
     static draw(canvas:HTMLCanvasElement,image:DecodedImage){
-        
+
         if(!image.pixelData?.length) return;
 
-        const pixelData =image.pixelData;
+        let pixelData =image.pixelData;
+
+
+
         
+
         const {min,max,windowCenter,windowWidth} = image.getLUT();
-        console.log('pixelData',pixelData);
         canvas.width = image.width;
         canvas.height = image.height;
 
@@ -35,15 +38,16 @@ class Canvas2D {
                     imageData.data[imageDataIndex++] = Canvas2D._calcPixel(pixelData[i+1],min,max,windowWidth,windowCenter);
                     imageData.data[imageDataIndex++] = Canvas2D._calcPixel(pixelData[i+2],min,max,windowWidth,windowCenter);
                     imageData.data[imageDataIndex++] = 255;
-
                 }
             }
+            
             context?.putImageData(imageData,0,0);
         }
 
     }
 
     private static _calcPixel(pixel:number,min:number,max:number,windowWidth:number,windowCenter:number){
+        // return pixel;
         if(max <= pixel) return 255;
         else if( min >= pixel) return 0;
         else return ((pixel - windowCenter)/(windowWidth)+0.5)*255;

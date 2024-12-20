@@ -10,8 +10,8 @@ class RLE {
             samplesPerPixel,
             bitsAllocated,
             planarConfiguration,
-            pixelRepresentation,
         } = options;
+        
         if(!rows || !columns || !samplesPerPixel){
             return null;
         }
@@ -25,12 +25,6 @@ class RLE {
             planarConfiguration,
         });
 
-        if(bitsAllocated > 8){
-            if(pixelRepresentation === 0){
-                return new Uint16Array(decoded.buffer);
-            }
-            return new Int16Array(decoded.buffer);
-        }
         return decoded;
 
         

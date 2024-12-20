@@ -1,12 +1,14 @@
 
 import { ChangeEvent, useCallback, useRef, useState } from 'react';
 
-import { loadAndParseFromFiles, loadAndParseFromUrl } from '@abasb75/dicom-parser'; 
 // import { loadAndParseFromFiles, loadAndParseFromUrl } from '../../dicom-parser/lib/index'; 
+import { loadAndParseFromFiles, loadAndParseFromUrl } from '@abasb75/dicom-parser'; 
 import decode from '@lib/index';
 import Canvas2D from './draw/Canvas2D';
 import { useDropzone } from 'react-dropzone';
 import { DecodeOptions } from '@lib/types';
+import PaletteColor from './draw/PaletteColor';
+import Dataset from '@abasb75/dicom-parser/Dataset';
 
 function App() {
 
@@ -49,13 +51,17 @@ function App() {
   const handleDcmfile = (dcmFile:File) => {
     const start = Date.now();
     loadAndParseFromFiles(dcmFile).then(async (dataset)=>{
-      console.log(dataset);
+      console.log({dataset});
       if(!canvasRef.current) return;
+      if(!dataset.hasPixelData()){
+        alert("dicom file has no pixel data!");
+        return;
+      }
       const pixelData = await dataset.getPixelData(0);
-      console.log(pixelData);
 
       const endParse = Date.now();
-      console.log(`parse time: ${endParse - start}`)
+      console.log(`parse time: ${endParse - start}`);
+      console.log('cz',dataset.littleEndian,)
       const image = await decode(
         pixelData,
         {
@@ -64,14 +70,37 @@ function App() {
           ...dataset.voiLUTModule,
           littleEndian:dataset.littleEndian,
           transferSyntaxUID:dataset.transferSyntaxUID,
+          isFloat:dataset.getPixelTypes()===Dataset.Float,
         } as DecodeOptions
       );
-      console.log('decodedPixels',image);
-      const endDecoded = Date.now();
-      console.log(`decode time: ${endDecoded - endParse}`)
+
+
+
+      if(!image || !image.pixelData){
+        alert('failed to decode');
+        return;
+      }
+
+      image.pixelModule = dataset.pixelModule;
+      console.log('image pixel  data',image.pixelData)
+      if(image?.pixelModule?.photometricInterpretation === 'PALETTE COLOR'){
+        
+        const paleteData = dataset.getPaletteColorData();
+
+        console.log({paleteData})
+
+        if(paleteData){
+          image.pixelData = PaletteColor.applyPaletteColor(
+            image.pixelData,
+            paleteData,
+          );
+        }
+        
+      }
+      
+
       if(image){
         await Canvas2D.draw(canvasRef.current,image);
-        console.log(`render time: ${Date.now() - endDecoded}`)
       }
       
     });

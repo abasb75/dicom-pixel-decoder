@@ -48,3 +48,20 @@ a javascript powerfull dicom decoder
 1.2.840.10008.1.2.4.100 | MPEG2 Main Profile Main Level	| No
 1.2.840.10008.1.2.4.102 | MPEG-4 AVC/H.264 High Profile / Level 4.1 | No
 1.2.840.10008.1.2.4.103 | MPEG-4 AVC/H.264 BD-compatible High Profile / Level 4.1	 | No
+
+
+## Tested Datasets:
+1. Many Private datasets.
+
+2. <a href="https://github.com/cornerstonejs/cornerstoneWADOImageLoader/tree/master/testImages">
+https://github.com/cornerstonejs/cornerstoneWADOImageLoader/tree/master/testImages
+</a>
+
+3. <a href="https://github.com/pydicom/pydicom-data">
+https://github.com/pydicom/pydicom-data
+</a>
+
+4. <a href="https://www.dicomlibrary.com/">
+https://www.dicomlibrary.com/
+</a>
+
