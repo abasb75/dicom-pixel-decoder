@@ -25,6 +25,9 @@ function App() {
   const [currentFileIndex,setCurrentFileIndex] = useState(0);
   const [dataset,setDataset] = useState<Dataset|undefined>();
 
+  const [decodeTime,setDecodeTime] = useState(0);
+  const [paintTime,setPaintTime] = useState(0);
+
   useEffect(()=>{
     if(!testFiles || testFiles.length < currentFileIndex+1){
       return;
@@ -127,6 +130,7 @@ function App() {
     
     const pixelData = await dataset.getPixelData(0);
 
+    const start = Date.now();
     const image = await decode(
         pixelData,
         {
@@ -154,9 +158,14 @@ function App() {
         );
       }
     }
+    const end = Date.now();
+    setDecodeTime(end - start);
 
     if(image && canvasRef.current){
+      const start = Date.now();
       await Canvas2D.draw(canvasRef.current,image);
+      const end = Date.now();
+      setPaintTime(end - start);
       setIsLoading(false);
     }
   }
@@ -207,6 +216,8 @@ function App() {
               <div className='bg-red w-full h-[calc(100%_-_50px)] flex items-center justify-center relative pb-10'>
                 <canvas id="xac" ref={canvasRef} className='w-full h-full object-contain' />
                 {dataset && <OverlayLayout 
+                  paint={paintTime}
+                  decode={decodeTime}
                   dataset={dataset} 
                   fileName={testFiles?testFiles[currentFileIndex]:""}
                 />}

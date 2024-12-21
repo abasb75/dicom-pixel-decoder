@@ -3,9 +3,13 @@ import Dataset from "@abasb75/dicom-parser/Dataset";
 function OverlayLayout({
     dataset,
     fileName,
+    decode,
+    paint,
 }:{
     dataset:Dataset;
     fileName:string;
+    decode:number;
+    paint:number;
 }){
     const {
         rows,
@@ -26,6 +30,12 @@ function OverlayLayout({
         <div className="absolute bottom-12 left-2">
             <div>{fileName}</div>
             <div>transferUID: {dataset?.transferSyntaxUID}</div>
+        </div>
+
+        <div className="absolute top-2 right-2">
+            <div>Parse: {((dataset.end || 0)-(dataset.start))}ms</div>
+            <div>Decode: {decode || 0}ms</div>
+            <div>Paint: {paint}ms</div>
         </div>
     </div>);
 }
