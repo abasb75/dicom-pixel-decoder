@@ -1,5 +1,5 @@
 
-import { ChangeEvent, useCallback, useRef, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 // import { loadAndParseFromFiles, loadAndParseFromUrl } from '../../dicom-parser/lib/index'; 
 import { loadAndParseFromFiles, loadAndParseFromUrl } from '@abasb75/dicom-parser'; 
@@ -9,6 +9,7 @@ import { useDropzone } from 'react-dropzone';
 import { DecodeOptions } from '@lib/types';
 import PaletteColor from './draw/PaletteColor';
 import Dataset from '@abasb75/dicom-parser/Dataset';
+import OverlayLayout from './Overlay';
 
 function App() {
 
@@ -17,31 +18,83 @@ function App() {
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+  const [isLoading,setIsLoading] = useState(false);
+  const [errorMessage,setErrorMessage] = useState("");
+  const [testFiles,setTestFiles] = useState<string[]|null>(null);
+  const [currentFileIndex,setCurrentFileIndex] = useState(0);
+  const [dataset,setDataset] = useState<Dataset|undefined>();
+
+  useEffect(()=>{
+    if(!testFiles || testFiles.length < currentFileIndex+1){
+      return;
+    }
+    parseInputUrl(
+      `/dicom-pixel-decoder/test-files/${testFiles[currentFileIndex]}`
+    );
+  },[testFiles,currentFileIndex]);
+
+
+  const loadTestFiles = ()=>{
+    if(isLoading){
+      return;
+    }
+    if(testFiles && testFiles?.length>0){
+      return;
+    }
+    setIsLoading(true);
+    fetch('/dicom-pixel-decoder/data.json')
+    .then(r=>r.json())
+    .then(data=>{
+      if(Array.isArray(data)){
+        setTestFiles(data);
+        setErrorMessage("")
+      }else{
+        setErrorMessage("Error!");
+      }
+    }).catch(()=>{
+      setErrorMessage("Error!");
+    }).finally(()=>{
+      setIsLoading(false);
+    })
+  }
+
+  useEffect(()=>{
+    console.log({dataset});
+  },[dataset])
 
   const onDrop = useCallback((acceptedFiles:any) => {
+    setIsLoading(true);
+    setErrorMessage("");
     if(!acceptedFiles && acceptedFiles.length<1){
       return;
     }
     const dcmFile = acceptedFiles[0];
     handleDcmfile(dcmFile);
     
-  }, [])
+  }, []);
+
   const {getRootProps, getInputProps} = useDropzone({onDrop})
   
-  const parseInputUrl = ()=>{
-    const url = inputRef.current?.value;
+  const parseInputUrl = (urlAruments?:string)=>{
+    setIsLoading(true);
+    setErrorMessage("");
+    const url = urlAruments || inputRef.current?.value;
     if(!url){
       return;
     }
     
-    loadAndParseFromUrl(url).then(()=>{
-
+    loadAndParseFromUrl(url).then((dataset)=>{
+      handleDataset(dataset);
     }).catch(()=>{
-      
+      setIsLoading(false);
+      setErrorMessage("Error!")
     });
   }
 
   const fileInputChange = (event:ChangeEvent<HTMLInputElement>)=>{
+    setIsLoading(true);
+    setErrorMessage("");
     if (event.target.files && event.target.files[0] ) {
       const dcmFile = event.target.files[0];
       handleDcmfile(dcmFile);
@@ -49,20 +102,32 @@ function App() {
   }
 
   const handleDcmfile = (dcmFile:File) => {
-    const start = Date.now();
     loadAndParseFromFiles(dcmFile).then(async (dataset)=>{
-      console.log({dataset});
-      if(!canvasRef.current) return;
-      if(!dataset.hasPixelData()){
-        alert("dicom file has no pixel data!");
-        return;
-      }
-      const pixelData = await dataset.getPixelData(0);
+      handleDataset(dataset);
+    });
+  }
 
-      const endParse = Date.now();
-      console.log(`parse time: ${endParse - start}`);
-      console.log('cz',dataset.littleEndian,)
-      const image = await decode(
+  const handleDataset = async (dataset:Dataset|null)=>{
+    if(!dataset){
+      setIsLoading(false);
+      setErrorMessage('Error on parse file');
+      return;
+    }
+    if(!canvasRef.current) {
+      setIsLoading(false);
+      setErrorMessage('Canvas is not loaded');
+    };
+
+    if(!dataset.hasPixelData()){
+      setIsLoading(false);
+      setErrorMessage('File has no pixel data!');
+      return;
+    }
+    setDataset(dataset);
+    
+    const pixelData = await dataset.getPixelData(0);
+
+    const image = await decode(
         pixelData,
         {
           ...dataset.pixelModule,
@@ -72,38 +137,28 @@ function App() {
           transferSyntaxUID:dataset.transferSyntaxUID,
           isFloat:dataset.getPixelTypes()===Dataset.Float,
         } as DecodeOptions
-      );
+    );
 
-
-
-      if(!image || !image.pixelData){
-        alert('failed to decode');
+    if(!image || !image.pixelData){
         return;
-      }
+    }
 
-      image.pixelModule = dataset.pixelModule;
-      console.log('image pixel  data',image.pixelData)
-      if(image?.pixelModule?.photometricInterpretation === 'PALETTE COLOR'){
-        
-        const paleteData = dataset.getPaletteColorData();
-
-        console.log({paleteData})
-
-        if(paleteData){
-          image.pixelData = PaletteColor.applyPaletteColor(
-            image.pixelData,
+    image.pixelModule = dataset.pixelModule;
+      
+    if(image?.pixelModule?.photometricInterpretation === 'PALETTE COLOR'){
+      const paleteData = dataset.getPaletteColorData();
+      if(paleteData){
+        image.pixelData = PaletteColor.applyPaletteColor(
+          image.pixelData,
             paleteData,
-          );
-        }
-        
+        );
       }
-      
+    }
 
-      if(image){
-        await Canvas2D.draw(canvasRef.current,image);
-      }
-      
-    });
+    if(image && canvasRef.current){
+      await Canvas2D.draw(canvasRef.current,image);
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -120,14 +175,14 @@ function App() {
               <div className='h-[50px] w-full bg-black flex'>
                   <input 
                     type='text' 
-                    className='flex-1 h-full w-full bg-slate-700 text-gray-400 font-semibold px-4 '
-                    placeholder='Paste Your Dicom Url ...'
+                    className='flex-1 h-full w-full bg-slate-700 text-gray-400 font-semibold px-4 text-sm '
+                    placeholder='Paste Your Dicom Url or Drag and drop file to black box ...'
                     ref={inputRef}
                     onChange={(e)=>setInputHasText( ()=>(e.target.value)!=='' )}
                   />
                   {inputHasText ? (<button 
                     className='bg-slate-800 text-white px-2'
-                    onClick={parseInputUrl}
+                    onClick={()=>parseInputUrl()}
                   >
                     Parse Dicom
                   </button>) : (<>
@@ -149,8 +204,51 @@ function App() {
 
                   </>)}
               </div>
-              <div className='bg-red w-full h-[calc(100%_-_50px)] flex items-center justify-center'>
+              <div className='bg-red w-full h-[calc(100%_-_50px)] flex items-center justify-center relative pb-10'>
                 <canvas id="xac" ref={canvasRef} className='w-full h-full object-contain' />
+                {dataset && <OverlayLayout 
+                  dataset={dataset} 
+                  fileName={testFiles?testFiles[currentFileIndex]:""}
+                />}
+                {isLoading && <div 
+                  className='absolute w-full h-full top-0 left-0 bg-black flex justify-center items-center text-blue-400'
+                >
+                  Loading ...
+                </div>}
+                {errorMessage && <div 
+                  className='absolute text-[tomato] w-full h-full top-0 left-0 bg-black flex justify-center items-center'
+                >
+                  {errorMessage}
+                </div>}
+                <div className='absolute bottom-0 left-0 w-full h-10 bg-slate-800 flex items-center justify-between px-2'>
+                  <button 
+                    className='h-8 bg-slate-950 px-2 rounded-sm text-sm text-slate-300'
+                    onClick={loadTestFiles}
+                  >
+                    load test files
+                  </button>
+                  {testFiles &&<div className='flex items-center gap-2'>
+                    <button 
+                      className='h-8 bg-slate-950 px-2 rounded-sm text-sm text-slate-300'
+                      onClick={()=>setCurrentFileIndex(prev=>{
+                        if(prev===0) return 0;
+                        return prev-1;
+                      })}
+                    >
+                      Prev
+                    </button>
+                    {`${currentFileIndex+1} / ${testFiles?.length || 0}`}
+                    <button 
+                      className='h-8 bg-slate-950 px-2 rounded-sm text-sm text-slate-300'
+                      onClick={()=>setCurrentFileIndex(prev=>{
+                        if(prev===testFiles.length-1) return prev;
+                        return prev+1;
+                      })}
+                    >
+                      Next
+                    </button>
+                  </div>}
+                </div>
             </div>
             </div>
           </div>

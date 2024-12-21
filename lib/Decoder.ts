@@ -79,7 +79,6 @@ class Decoder {
 
         decodedPixelData = Decoder._toSutibleTypedArray(decodedPixelData,options);
         if(!decodedPixelData) return null;
-        decodedPixelData = Decoder._fixSize(decodedPixelData,options);
         if(!decodedPixelData){
             return null;
         }
@@ -102,6 +101,7 @@ class Decoder {
         Decoder._applyColorSpace(image,options);
         image.pixelData = Decoder._applyScaling(image,options);
         Decoder._setLUT(image,options);
+        image.pixelData = Decoder._fixSize(image.pixelData,options);
         return image;
     }
 
