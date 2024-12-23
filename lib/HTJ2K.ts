@@ -4,12 +4,11 @@ class HTJ2K{
 
     static async decode(pixelData:DataView){
 
-        let arrayBuffer = pixelData.buffer;
-        let offset = pixelData.byteOffset;
-        const length = pixelData.byteLength;
-
         const decoded = await decode(
-            arrayBuffer.slice(offset,length),
+            pixelData.buffer.slice(
+                pixelData.byteOffset,
+                pixelData.byteLength
+            )
         );
         
         return decoded.decodedBuffer;
@@ -18,4 +17,4 @@ class HTJ2K{
 
 }
 
-export  default HTJ2K;
+export default HTJ2K;

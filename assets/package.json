@@ -1,7 +1,7 @@
 {
     "name": "@abasb75/dicom-pixel-decoder",
-    "version": "0.0.0-test0",
-    "description": "a javascript powerfull dicom pixel data decoder",
+    "version": "0.0.0-test",
+    "description": "a powerfull javascript dicom pixel data decoder",
     "main": "index.js",
     "type": "module",
     "types": "index.d.ts",
@@ -16,19 +16,21 @@
     "license": "ISC",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/abasb75/dicom-parser/raction.git"
+        "url": "https://github.com/abasb75/dicom-pixel-decoder/raction.git"
     },
     "bugs": {
-        "url": "https://github.com/abasb75/dicom-parser/issues"
+        "url": "https://github.com/abasb75/dicom-pixel-decoder/issues"
     },
-    "homepage": "https://github.com/abasb75/dicom-parser#readme",
+    "homepage": "https://github.com/abasb75/dicom-pixel-decoder#readme",
     "dependencies": {
-        "pako": "^2.1.0"
-    },
-    "peerDependencies": {
-        "pako": "^2.1.0"
-    },
-    "devDependencies": {
-        "@types/pako": "^2.0.3"
+        "@abasb75/charls-decoder": "^2.4.2",
+        "@abasb75/jpeg2000-decoder": "^2.5.3",
+        "@abasb75/jpegjs": "^1.0.0",
+        "@abasb75/openjpeg": "^2.5.0",
+        "@abasb75/openjph": "^0.18.2-test1",
+        "@abasb75/turbojpeg-decoder": "^3.0.4",
+        "dicom-rle": "^0.0.10",
+        "jpeg-js": "^0.4.4",
+        "@abasb75/jpeg-lossless-decoder": "^2.1.2-a"
     }
 }

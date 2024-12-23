@@ -8,6 +8,8 @@ class PaletteColor {
         paletteColorData:PaletteColorData
     ):PixelArray{
 
+        console.log({paletteColorData})
+
         if(
             !paletteColorData
             || !paletteColorData.red 
@@ -15,6 +17,19 @@ class PaletteColor {
             || !paletteColorData.green
         ){
             return pixelData;
+        }
+
+        if(
+            !paletteColorData.red.littleEndian 
+            && paletteColorData.red.bitsPerEntry===16
+            && pixelData instanceof Uint8Array
+        ){
+            for(let i=0;i<pixelData.byteLength;i+=2){
+                const pixel1 = pixelData[i];
+                const pixel2 = pixelData[i+1];
+                pixelData[i] = pixel2;
+                pixelData[i+1] = pixel1;
+            }
         }
 
         const redPixels = PaletteColor.paletteDataToPixel(pixelData,paletteColorData.red);
@@ -25,15 +40,12 @@ class PaletteColor {
             return pixelData;
         }
 
+
         let _pixelData = null;
-        if( pixelData instanceof Uint8Array ){
-            _pixelData = new Uint8Array(pixelData.length * 3);
-        }else if(pixelData instanceof Uint16Array){
-            _pixelData = new Uint16Array(pixelData.length * 3);
-        }else if(pixelData instanceof Float32Array){
-            _pixelData = new Float32Array(pixelData.length * 3);
+        if(paletteColorData.red.bitsPerEntry === 16){
+            _pixelData = new Uint16Array(pixelData.length*3);
         }else{
-            return pixelData;
+            _pixelData = new Uint8Array(pixelData.length*3);
         }
 
         for(let i=0; i<pixelData.length; i++){
@@ -41,6 +53,8 @@ class PaletteColor {
             _pixelData[i*3+1] = greenPixels[i];
             _pixelData[i*3+2] = bluePixels[i];
         }
+
+        
 
         return _pixelData;
         
@@ -52,16 +66,7 @@ class PaletteColor {
             return null;
         }
 
-        let _pixelData = null;
-        if( pixelData instanceof Uint8Array ){
-            _pixelData = new Uint8Array(pixelData.length);
-        }else if(pixelData instanceof Uint16Array){
-            _pixelData = new Uint16Array(pixelData.length);
-        }else if(pixelData instanceof Float32Array){
-            _pixelData = new Float32Array(pixelData.length);
-        }else{
-            return pixelData;
-        }
+        let _pixelData = new Array(pixelData.length);
 
         for(let i=0;i<pixelData.length;i++){
             let pixel = pixelData[i];

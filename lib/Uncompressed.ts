@@ -1,13 +1,11 @@
 
 class UncompressedDecoder{
 
-    static  decode(pixelData:DataView){        
+    // only convert dataview to uint8 now
+    static decode(pixelData:DataView){        
         let arrayBuffer = pixelData.buffer;
-        console.log({pixelData})
         return new Uint8Array(arrayBuffer);
     }
-
-    
 
 }
 

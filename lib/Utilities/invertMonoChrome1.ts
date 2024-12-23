@@ -1,4 +1,4 @@
-import DecodedImage from "@lib/DecodedImage";
+import DecodedImage from "../DecodedImage";
 
 function invertMonochrome1(
     image:DecodedImage

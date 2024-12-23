@@ -52,7 +52,7 @@ class Decoder {
             case "1.2.840.10008.1.2.4.65": /**untested */
             case "1.2.840.10008.1.2.4.66": /**untested */
             case "1.2.840.10008.1.2.4.70":
-                decodedPixelData = await JPEGLossLess.decode(pixelData);
+                decodedPixelData = await JPEGLossLess.decode(pixelData,options);
                 break;
             case "1.2.840.10008.1.2.4.80":
             case "1.2.840.10008.1.2.4.81":
@@ -105,7 +105,7 @@ class Decoder {
         return image;
     }
 
-    private static _setLUT(image:DecodedImage,options:DecodeOptions) {
+    static _setLUT(image:DecodedImage,options:DecodeOptions) {
         if(options.windowCenter && options.windowWidth){
             const windowWidth = options.windowWidth;
             const windowCenter = options.windowCenter;

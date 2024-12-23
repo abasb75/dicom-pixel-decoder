@@ -2,14 +2,18 @@
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 // import { loadAndParseFromFiles, loadAndParseFromUrl } from '../../dicom-parser/lib/index'; 
-import { loadAndParseFromFiles, loadAndParseFromUrl } from '@abasb75/dicom-parser'; 
-import decode from '@lib/index';
+import { loadAndParseFromFiles, loadAndParseFromUrl } from '@abasb75/dicom-parser';
+import decode from '@abasb75/dicom-pixel-decoder';
+
+// import decode from '../package/index';
+// import decode from '@lib/index';
 import Canvas2D from './draw/Canvas2D';
 import { useDropzone } from 'react-dropzone';
 import { DecodeOptions } from '@lib/types';
 import PaletteColor from './draw/PaletteColor';
 import Dataset from '@abasb75/dicom-parser/Dataset';
 import OverlayLayout from './Overlay';
+import Decoder from '@lib/Decoder';
 
 function App() {
 
@@ -62,10 +66,6 @@ function App() {
     })
   }
 
-  useEffect(()=>{
-    console.log({dataset});
-  },[dataset])
-
   const onDrop = useCallback((acceptedFiles:any) => {
     setIsLoading(true);
     setErrorMessage("");
@@ -111,6 +111,7 @@ function App() {
   }
 
   const handleDataset = async (dataset:Dataset|null)=>{
+    console.log({dataset})
     if(!dataset){
       setIsLoading(false);
       setErrorMessage('Error on parse file');
@@ -154,8 +155,16 @@ function App() {
       if(paleteData){
         image.pixelData = PaletteColor.applyPaletteColor(
           image.pixelData,
-            paleteData,
+          paleteData,
         );
+        Decoder._setLUT(image,{
+          ...dataset.pixelModule,
+          ...dataset.scalingModule,
+          ...dataset.voiLUTModule,
+          littleEndian:dataset.littleEndian,
+          transferSyntaxUID:dataset.transferSyntaxUID,
+          isFloat:dataset.getPixelTypes()===Dataset.Float,
+        } as DecodeOptions);
       }
     }
     const end = Date.now();

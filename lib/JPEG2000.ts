@@ -4,18 +4,15 @@ class JPEG2000{
 
     static async decode(pixelData:DataView){
 
-        let arrayBuffer = pixelData.buffer;
-        console.log({arrayBuffer});
-        let offset = pixelData.byteOffset;
-        const length = pixelData.byteLength;
-
         const decoded = await decode(
-            arrayBuffer.slice(offset,length),
+            pixelData.buffer.slice(
+                pixelData.byteOffset,
+                pixelData.byteLength,
+            ),
         );
 
-        console.log({decoded})
-
         return decoded.decodedBuffer;
+        
     }
 
 }

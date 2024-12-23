@@ -3,6 +3,7 @@ import getMinMax from "./Utilities/getMinMax";
 import { PixelArray } from "./types";
 
 class DecodedImage {
+    
     transferSyntax:string;
     width:number;
     height:number;
@@ -30,13 +31,7 @@ class DecodedImage {
     }
 
     getMinMax(){
-        if(!this.min || this.max){
-            return getMinMax(this.pixelData)
-        }
-        return {
-            min:this.min as number,
-            max:this.max as number,
-        }
+        return getMinMax(this.pixelData)
     }
 
     getLUT(){

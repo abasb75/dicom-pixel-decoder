@@ -14,6 +14,7 @@ class JPEGBaselineLossyProcess1_8bit{
                 return JPEGBaselineLossyProcess1_8bit.jpegJS(pixelData,options);
             }
         }catch{
+            // this works fine, but is slower.
             const data = await JPEGBaselineLossyProcess1_8bit.turboJpeg(pixelData);
             return data;
         }

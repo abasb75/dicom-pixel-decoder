@@ -65,3 +65,52 @@ https://github.com/pydicom/pydicom-data
 https://www.dicomlibrary.com/
 </a>
 
+
+## Decode PixelData:
+
+```javascript
+import { parse } from "@abasb75/dicom-parser";
+import Dataset from "@abasb75/dicom-parser/Dataset";
+import decode from "@abasb75/dicom-pixel-decoder";
+
+...
+
+const dataset = await pare(arrayBuffer);
+const { pixelModule, scalingModule, voiLUTModule } = dataset;
+
+const decodedImage = await decode(
+    pixelData,
+    {
+        transferSyntaxUID: dataset.transferSyntaxUID,
+        littleEndian: dataset.littleEndian,
+
+        modality:scalingModule.modality,
+
+        windowWidth:voiLUTModule.windowWidth,
+        windowCenter:voiLUTModule.windowCenter,
+
+        bitsAllocated:pixelModule.bitsAllocated,
+        pixelRepresentation: pixelModule.pixelRepresentation,
+        samplesPerPixel: pixelModule.samplesPerPixel,
+        rows: pixelModule.rows,
+        columns: pixelModule.columns,
+        rescaleSlope: pixelModule.rescaleSlope,
+        rescaleIntercept: pixelModule.rescaleIntercept,
+        planarConfiguration: pixelModule.planarConfiguration,
+        photometricInterpretation: pixelModule.photometricInterpretation, 
+        bitsStored: pixelModule.bitsStored,
+
+        // must be true if pixel data finded in #7fe00009 or #7fe00008 elements.
+        isFloat:dataset.getPixelTypes()===Dataset.Float,
+    }
+);
+
+console.log(decodedImage);
+
+// image yet need to apply some process like apply windowing, apply color palette map data and ...
+
+...
+
+
+```
+
