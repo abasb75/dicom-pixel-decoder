@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@abasb75/charls-decoder": "^2.4.2",
-    "@abasb75/dicom-parser": "^0.0.0-test21",
+    "@abasb75/dicom-parser": "^0.0.0-test23",
     "@abasb75/dicom-pixel-decoder": "^0.0.0-test8",
     "@abasb75/jpeg-lossless-decoder": "^2.1.2-a",
     "@abasb75/jpeg2000-decoder": "^2.5.3",

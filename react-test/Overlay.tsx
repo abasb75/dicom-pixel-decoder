@@ -37,6 +37,11 @@ function OverlayLayout({
             <div>Decode: {decode || 0}ms</div>
             <div>Paint: {paint}ms</div>
         </div>
+
+        <div className="absolute bottom-12 right-2">
+            {(Array.isArray(dataset.pixelModule.pixelSpacing) && dataset.pixelModule.pixelSpacing.length >= 2)
+                && <div>[ {dataset.pixelModule.pixelSpacing[0]} , {dataset.pixelModule.pixelSpacing[1]} ]</div>}
+        </div>
     </div>);
 }
 

@@ -14,6 +14,7 @@ import PaletteColor from './draw/PaletteColor';
 import Dataset from '@abasb75/dicom-parser/Dataset';
 import OverlayLayout from './Overlay';
 import Decoder from '@lib/Decoder';
+import PixelSpacing from './draw/PixelSpacing';
 
 function App() {
 
@@ -169,6 +170,18 @@ function App() {
     }
     const end = Date.now();
     setDecodeTime(end - start);
+
+    const scaled = PixelSpacing.apply(
+      image.pixelData,
+      dataset.pixelModule.pixelSpacing,
+      image.width,
+      image.height,
+      dataset.pixelModule.samplesPerPixel || 1,
+    )
+
+    image.pixelData = scaled.pixelData;
+    image.width = scaled.width;
+    image.height = scaled.hieght;
 
     if(image && canvasRef.current){
       const start = Date.now();

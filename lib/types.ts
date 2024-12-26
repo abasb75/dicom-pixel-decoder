@@ -46,7 +46,7 @@ export interface DicomPixelModule{
     photometricInterpretation:string,
     numberOfFrames:number|undefined,
     pixelRepresentation:number|undefined,
-    pixeSpacing:any|undefined,
+    pixelSpacing:any|undefined,
     rows:number|number|undefined,
     columns:number|number|undefined,
     bitsAllocated:number|undefined,
