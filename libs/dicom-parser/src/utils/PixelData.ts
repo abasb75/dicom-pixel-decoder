@@ -8,7 +8,6 @@ class PixelData {
     dataset:Dataset;
 
     constructor(dataset:Dataset){
-        console.log({dataset});
         this.dataset = dataset;
     }
 
@@ -60,7 +59,6 @@ class PixelData {
 
     fetchEncapsulatedFrame(pixelDataElement:any,frameIndex:number=0){
         const numberOfFrames = parseInt(this.dataset.get(0x0028,0x0008)) || 1;
-        console.log({pixelDataElement,numberOfFrames});
         const bytes = this.dataset.bytes;
         const offset =pixelDataElement.value.offsetTable[0];
         const nextOffsetTable = pixelDataElement.value.endOffset ;
@@ -82,8 +80,6 @@ class PixelData {
             }
             cursor += length;
         }
-
-        console.log({numberOfFrames,fragments});
         
         if(numberOfFrames > 1 && numberOfFrames == fragments.length){
             return new DataView(fragments[frameIndex].buffer);
@@ -120,7 +116,6 @@ class PixelData {
         }
 
         const frame = this.concatFragments(fragments);
-        console.log({isJPEGLS:this.isJPEGLS(frame)});
         return new DataView(frame.buffer);
     }
 
@@ -156,14 +151,14 @@ class PixelData {
         return Math.ceil(bit/8);
     }
 
-    private isJPEGLS(uint8array:Uint8Array) {
-        for (let i = 0; i < uint8array.length - 1; i++) {
-            if (uint8array[i] === 0xFF && uint8array[i + 1] === 0xF7) {
-            return true;
-            }
-        }
-        return false;
-    }
+    // private isJPEGLS(uint8array:Uint8Array) {
+    //     for (let i = 0; i < uint8array.length - 1; i++) {
+    //         if (uint8array[i] === 0xFF && uint8array[i + 1] === 0xF7) {
+    //         return true;
+    //         }
+    //     }
+    //     return false;
+    // }
 
 }
 

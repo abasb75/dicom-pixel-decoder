@@ -32,9 +32,6 @@ class PaletteColor {
             }
         }
 
-        console.log({pixelData,paletteColorData});
-
-
         const redPixels = PaletteColor.paletteDataToPixel(pixelData,paletteColorData.red);
         const greenPixels = PaletteColor.paletteDataToPixel(pixelData,paletteColorData.green);
         const bluePixels = PaletteColor.paletteDataToPixel(pixelData,paletteColorData.blue);

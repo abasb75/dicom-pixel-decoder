@@ -160,7 +160,6 @@ class PaletteColor {
             const len = segmentedTableData[segmentedDataOffset];
             segmentedDataOffset++;
             if(op===2){
-                console.log({op});
             }
             switch(op){
                 case 0:

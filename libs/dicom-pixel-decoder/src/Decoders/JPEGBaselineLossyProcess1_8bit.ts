@@ -89,7 +89,6 @@ class JPEGBaselineLossyProcess1_8bit{
     static async turboJpeg(pixelData: DataView) {
         // ساخت ArrayBuffer واقعی از ArrayBuffer | SharedArrayBuffer
         const buffer = new Uint8Array(pixelData.buffer, pixelData.byteOffset, pixelData.byteLength).slice().buffer;
-        console.log('turbo-jpeg');
         const decoded = await turboJPEG.decode(buffer);
         return decoded?.decodedBuffer;
     }

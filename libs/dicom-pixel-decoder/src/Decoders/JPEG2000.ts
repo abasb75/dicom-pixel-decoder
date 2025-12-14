@@ -1,7 +1,4 @@
-import { decode } from "../wasms/openjpeg/index";
-// import { decode } from "../wasms/openjs2/index";
-
-// import { decode } from "@abasb75/jpeg2000-decoder";
+import { decode } from "@abasb75/jpeg2000-decoder";
 
 class JPEG2000{
 

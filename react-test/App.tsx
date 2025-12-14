@@ -85,7 +85,7 @@ function App() {
     loadAndParseFromUrl(url).then((dataset)=>{
       handleDataset(dataset);
     }).catch((e)=>{
-      console.log({e});
+      console.error(e);
       setIsLoading(false);
       setErrorMessage("Error!")
     });

@@ -37,7 +37,6 @@ class PixelSpacing {
 
         const xPixelSpacing = pixelSpacing[1];
         const yPixelSpacing = pixelSpacing[0];
-        console.log({pixelSpacing})
         if(xPixelSpacing > yPixelSpacing){
             return PixelSpacing.xScaling(
                 pixelData,
