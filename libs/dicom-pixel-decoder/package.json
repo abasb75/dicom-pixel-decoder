@@ -1,0 +1,36 @@
+{
+  "name": "@abasb75/dicom-pixel-decoder",
+  "version": "0.0.6a",
+  "description": "A lightweight DICOM image decoder.",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup"
+  },
+  "dependencies": {
+    "@abasb75/charls": "^2.4.2-p8",
+    "@abasb75/jpeg-lossless-decoder": "^2.1.2-a",
+    "@abasb75/jpeg2000-decoder": "^2.5.4-e",
+    "@abasb75/jpegjs": "^1.0.1",
+    "@abasb75/openjpeg": "^2.5.3",
+    "@abasb75/openjph": "^0.18.2",
+    "@abasb75/turbojpeg-decoder": "^3.1.2-b",
+    "dicom-rle": "^0.0.11",
+    "jpeg-js": "^0.4.4"
+  },
+  "keywords": [
+    "dicom",
+    "parser",
+    "medical",
+    "radiology"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "tsup": "^8.5.1"
+  }
+}

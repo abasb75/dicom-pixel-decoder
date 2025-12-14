@@ -1,20 +1,14 @@
 
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 
-// import { loadAndParseFromFiles, loadAndParseFromUrl } from '../../dicom-parser/lib/index'; 
 import { loadAndParseFromFiles, loadAndParseFromUrl } from '@abasb75/dicom-parser';
-import decode from '@abasb75/dicom-pixel-decoder';
 
-// import decode from '../package/index';
-// import decode from '@lib/index';
+import {decode} from '@abasb75/dicom-pixel-decoder';
 import Canvas2D from './draw/Canvas2D';
 import { useDropzone } from 'react-dropzone';
-import { DecodeOptions } from '@lib/types';
-import PaletteColor from './draw/PaletteColor';
+import { DecodeOptions } from '@abasb75/dicom-pixel-decoder/types';
 import Dataset from '@abasb75/dicom-parser/Dataset';
 import OverlayLayout from './Overlay';
-import Decoder from '@lib/Decoder';
-import PixelSpacing from './draw/PixelSpacing';
 
 function App() {
 
@@ -27,7 +21,7 @@ function App() {
   const [isLoading,setIsLoading] = useState(false);
   const [errorMessage,setErrorMessage] = useState("");
   const [testFiles,setTestFiles] = useState<string[]|null>(null);
-  const [currentFileIndex,setCurrentFileIndex] = useState(0);
+  const [currentFileIndex,setCurrentFileIndex] = useState(15);
   const [dataset,setDataset] = useState<Dataset|undefined>();
 
   const [decodeTime,setDecodeTime] = useState(0);
@@ -87,10 +81,11 @@ function App() {
     if(!url){
       return;
     }
-    
+
     loadAndParseFromUrl(url).then((dataset)=>{
       handleDataset(dataset);
-    }).catch(()=>{
+    }).catch((e)=>{
+      console.log({e});
       setIsLoading(false);
       setErrorMessage("Error!")
     });
@@ -112,7 +107,6 @@ function App() {
   }
 
   const handleDataset = async (dataset:Dataset|null)=>{
-    console.log({dataset})
     if(!dataset){
       setIsLoading(false);
       setErrorMessage('Error on parse file');
@@ -123,22 +117,20 @@ function App() {
       setErrorMessage('Canvas is not loaded');
     };
 
-    if(!dataset.hasPixelData()){
-      setIsLoading(false);
-      setErrorMessage('File has no pixel data!');
-      return;
-    }
     setDataset(dataset);
     
     const pixelData = await dataset.getPixelData(0);
+    
+    
 
     const start = Date.now();
+
     const image = await decode(
         pixelData,
         {
-          ...dataset.pixelModule,
-          ...dataset.scalingModule,
-          ...dataset.voiLUTModule,
+          ...dataset.getPixelModule(),
+          ...dataset.getScalingModule(),
+          ...dataset.getVOILutModule(),
           littleEndian:dataset.littleEndian,
           transferSyntaxUID:dataset.transferSyntaxUID,
           isFloat:dataset.getPixelTypes()===Dataset.Float,
@@ -149,39 +141,27 @@ function App() {
         return;
     }
 
-    image.pixelModule = dataset.pixelModule;
-      
     if(image?.pixelModule?.photometricInterpretation === 'PALETTE COLOR'){
-      const paleteData = dataset.getPaletteColorData();
-      if(paleteData){
-        image.pixelData = PaletteColor.applyPaletteColor(
-          image.pixelData,
-          paleteData,
-        );
-        Decoder._setLUT(image,{
-          ...dataset.pixelModule,
-          ...dataset.scalingModule,
-          ...dataset.voiLUTModule,
-          littleEndian:dataset.littleEndian,
-          transferSyntaxUID:dataset.transferSyntaxUID,
-          isFloat:dataset.getPixelTypes()===Dataset.Float,
-        } as DecodeOptions);
-      }
+      image.applyPaletteColor(dataset.getPaletteColorData());
     }
+
     const end = Date.now();
     setDecodeTime(end - start);
 
-    const scaled = PixelSpacing.apply(
-      image.pixelData,
-      dataset.pixelModule.pixelSpacing,
-      image.width,
-      image.height,
-      dataset.pixelModule.samplesPerPixel || 1,
-    )
+    console.log({image});
 
-    image.pixelData = scaled.pixelData;
-    image.width = scaled.width;
-    image.height = scaled.hieght;
+    image.applySpacing();
+
+    // const blob = new Blob([image.pixelData], { type: "application/octet-stream" });
+    // const url = URL.createObjectURL(blob);
+    // const a = document.createElement("a");
+    // a.href = url;
+    // a.download = "pixel.raw";
+    // document.body.appendChild(a);
+    // a.click();
+
+    // URL.revokeObjectURL(url);
+    // document.body.removeChild(a);
 
     if(image && canvasRef.current){
       const start = Date.now();
@@ -189,8 +169,11 @@ function App() {
       const end = Date.now();
       setPaintTime(end - start);
       setIsLoading(false);
+
     }
   }
+
+
 
   return (
     <div {...getRootProps({

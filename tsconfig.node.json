@@ -4,7 +4,9 @@
     "paths":{
       "@lib/*": ["./lib/*"],
       "@src/*":["react-test/*"],
-      "@package/*":["./package/*"]
+      "@package/*":["./package/*"],
+      "@abasb75/dicom-pixel-decoder/*": ["./libs/dicom-pixel-decoder/src/*"],
+      "@abasb75/dicom-parser/*": ["./libs/dicom-parser/src/*"]
     },
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
     "composite": true,

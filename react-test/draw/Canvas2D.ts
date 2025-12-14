@@ -1,4 +1,4 @@
-import DecodedImage from "@lib/DecodedImage";
+import DecodedImage from "@abasb75/dicom-pixel-decoder/DecodedImage";
 
 class Canvas2D {
 
@@ -7,11 +7,7 @@ class Canvas2D {
         if(!image.pixelData?.length) return;
 
         let pixelData =image.pixelData;
-
-
-
         
-
         const {min,max,windowCenter,windowWidth} = image.getLUT();
         canvas.width = image.width;
         canvas.height = image.height;
@@ -47,7 +43,6 @@ class Canvas2D {
     }
 
     private static _calcPixel(pixel:number,min:number,max:number,windowWidth:number,windowCenter:number){
-        // return pixel;
         if(max <= pixel) return 255;
         else if( min >= pixel) return 0;
         else return ((pixel - windowCenter)/(windowWidth)+0.5)*255;
